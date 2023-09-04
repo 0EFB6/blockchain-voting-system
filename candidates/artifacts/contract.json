@@ -9,7 +9,7 @@
           "name": "dun"
         },
         {
-          "type": "uint64",
+          "type": "uint8",
           "name": "dun_no"
         },
         {
@@ -22,7 +22,21 @@
       }
     },
     {
-      "name": "read",
+      "name": "read_dun",
+      "args": [],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "read_dun_no",
+      "args": [],
+      "returns": {
+        "type": "uint8"
+      }
+    },
+    {
+      "name": "read_state",
       "args": [],
       "returns": {
         "type": "string"
