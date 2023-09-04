@@ -1,8 +1,9 @@
 from pyteal import *
 
 handle_creation = Seq(
-	App.globalPut(Bytes("dun"), Bytes("N/A")),
+	App.globalPut(Bytes("dun"), Bytes("NULL")),
 	App.globalPut(Bytes("dun_no"), Int(0)),
+	App.globalPut(Bytes("state"), Bytes("NULL_STATE")),
 	Approve()
 )
 
@@ -14,7 +15,7 @@ router = Router(
 )
 
 @router.method
-def add_candidate(dun: abi.String, dun_no: abi.Uint64, state: abi.String):
+def add_candidate(dun: abi.String, dun_no: abi.Uint8, state: abi.String):
 	return Seq(
 		App.globalPut(Bytes("dun"), dun.get()),
 		App.globalPut(Bytes("dun_no"), dun_no.get()),
@@ -22,8 +23,16 @@ def add_candidate(dun: abi.String, dun_no: abi.Uint64, state: abi.String):
 	)
 
 @router.method
-def read(*, output:abi.String):
+def read_dun(*, output:abi.String):
 	return output.set(App.globalGet(Bytes("dun")))
+
+@router.method
+def read_dun_no(*, output:abi.Uint8):
+	return output.set(App.globalGet(Bytes("dun_no")))
+
+@router.method
+def read_state(*, output:abi.String):
+	return output.set(App.globalGet(Bytes("state")))
 
 if __name__ == "__main__":
 	import os
