@@ -1,0 +1,139 @@
+#pragma version 8
+txn NumAppArgs
+int 0
+==
+bnz main_l8
+txna ApplicationArgs 0
+method "increment()void"
+==
+bnz main_l7
+txna ApplicationArgs 0
+method "decrement()void"
+==
+bnz main_l6
+txna ApplicationArgs 0
+method "read_count()uint64"
+==
+bnz main_l5
+err
+main_l5:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub readcountcaster_5
+int 1
+return
+main_l6:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub decrementcaster_4
+int 1
+return
+main_l7:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub incrementcaster_3
+int 1
+return
+main_l8:
+txn OnCompletion
+int NoOp
+==
+bnz main_l10
+err
+main_l10:
+txn ApplicationID
+int 0
+==
+assert
+byte "count"
+int 0
+app_global_put
+int 1
+return
+
+// increment
+increment_0:
+proto 0 0
+byte "count"
+app_global_get
+store 0
+byte "count"
+load 0
+int 1
++
+app_global_put
+retsub
+
+// decrement
+decrement_1:
+proto 0 0
+global GroupSize
+int 1
+==
+assert
+byte "count"
+app_global_get
+store 1
+load 1
+int 0
+>
+bz decrement_1_l2
+byte "count"
+load 1
+int 1
+-
+app_global_put
+decrement_1_l2:
+retsub
+
+// read_count
+readcount_2:
+proto 0 1
+int 0
+byte "count"
+app_global_get
+frame_bury 0
+retsub
+
+// increment_caster
+incrementcaster_3:
+proto 0 0
+callsub increment_0
+retsub
+
+// decrement_caster
+decrementcaster_4:
+proto 0 0
+callsub decrement_1
+retsub
+
+// read_count_caster
+readcountcaster_5:
+proto 0 0
+int 0
+callsub readcount_2
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+itob
+concat
+log
+retsub
