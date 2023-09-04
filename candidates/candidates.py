@@ -1,38 +1,67 @@
 from pyteal import *
 
-handle_creation = Seq(
-	App.globalPut(Bytes("dun"), Bytes("NULL")),
-	App.globalPut(Bytes("dun_no"), Int(0)),
-	App.globalPut(Bytes("state"), Bytes("NULL_STATE")),
-	Approve()
-)
+#handle_creation = Seq(
+#	App.globalPut(Bytes("dun"), Bytes("NULL")),
+#	App.globalPut(Bytes("dun_no"), Int(0)),
+#	App.globalPut(Bytes("state"), Bytes("NULL_STATE")),
+#	Approve()
+#)
 
 router = Router(
 	"candidates",
 	BareCallActions(
-		no_op=OnCompleteAction.create_only(handle_creation),
+		no_op=OnCompleteAction.create_only(Approve()),
+		opt_in=OnCompleteAction.call_only(Approve()),
 	),
 )
 
 @router.method
-def add_candidate(dun: abi.String, dun_no: abi.Uint8, state: abi.String):
-	return Seq(
-		App.globalPut(Bytes("dun"), dun.get()),
-		App.globalPut(Bytes("dun_no"), dun_no.get()),
-		App.globalPut(Bytes("state"), state.get()),
+def candidates_info_to_contract(name: abi.String, dun_no: abi.Uint8):
+	k_name = Bytes("candidate_name")
+	k_dun_no = Bytes("candidate_dun_no")
+	is_sender = Txn.sender() == Bytes("EBJXMYTRWL2BQLKK4BXYFOPN5R45UDLAIUANNOBM3CU7EW5AQLU6FXGPRI")
+	check = And(
+		is_sender,
+		Txn.application_id() == Int(0),
+		Itob(Txn.application_id()) != Txn.sender()
 	)
 
-@router.method
-def read_dun(*, output:abi.String):
-	return output.set(App.globalGet(Bytes("dun")))
+	on_creation = Seq(
+		If(check,
+	 		App.localPut(Txn.sender(), k_name, name.get()),
+			App.localPut(Txn.sender(), k_dun_no, dun_no.get()),
+		),
+	)
+
+	return on_creation
 
 @router.method
-def read_dun_no(*, output:abi.Uint8):
-	return output.set(App.globalGet(Bytes("dun_no")))
+def get_candidate_name(*, output: abi.Uint8):
+	return output.set(App.localGet(Txn.sender(), Bytes("candidate_dun_no")))
 
-@router.method
-def read_state(*, output:abi.String):
-	return output.set(App.globalGet(Bytes("state")))
+#@router.method
+#def get_candidate_dun_no(*, output:abi.Uint8):
+#	return output.set(App.globalGet(Bytes("candidate_dun_no")))
+#
+#@router.method
+#def add_candidate(dun: abi.String, dun_no: abi.Uint8, state: abi.String):
+#	return Seq(
+#		App.globalPut(Bytes("dun"), dun.get()),
+#		App.globalPut(Bytes("dun_no"), dun_no.get()),
+#		App.globalPut(Bytes("state"), state.get()),
+#	)
+#
+#@router.method
+#def read_dun(*, output:abi.String):
+#	return output.set(App.globalGet(Bytes("dun")))
+#
+#@router.method
+#def read_dun_no(*, output:abi.Uint8):
+#	return output.set(App.globalGet(Bytes("dun_no")))
+#
+#@router.method
+#def read_state(*, output:abi.String):
+#	return output.set(App.globalGet(Bytes("state")))
 
 if __name__ == "__main__":
 	import os

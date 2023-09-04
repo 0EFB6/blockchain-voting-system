@@ -2,133 +2,102 @@
 txn NumAppArgs
 int 0
 ==
-bnz main_l10
-txna ApplicationArgs 0
-method "add_candidate(string,uint8,string)void"
-==
-bnz main_l9
-txna ApplicationArgs 0
-method "read_dun()string"
-==
-bnz main_l8
-txna ApplicationArgs 0
-method "read_dun_no()uint8"
-==
-bnz main_l7
-txna ApplicationArgs 0
-method "read_state()string"
-==
 bnz main_l6
+txna ApplicationArgs 0
+method "candidates_info_to_contract(string,uint8)void"
+==
+bnz main_l5
+txna ApplicationArgs 0
+method "get_candidate_name()uint8"
+==
+bnz main_l4
 err
+main_l4:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub getcandidatenamecaster_3
+int 1
+return
+main_l5:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub candidatesinfotocontractcaster_2
+int 1
+return
 main_l6:
 txn OnCompletion
 int NoOp
 ==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub readstatecaster_7
-int 1
-return
-main_l7:
+bnz main_l10
 txn OnCompletion
-int NoOp
+int OptIn
 ==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub readdunnocaster_6
-int 1
-return
-main_l8:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub readduncaster_5
-int 1
-return
+bnz main_l9
+err
 main_l9:
-txn OnCompletion
-int NoOp
-==
 txn ApplicationID
 int 0
 !=
-&&
 assert
-callsub addcandidatecaster_4
 int 1
 return
 main_l10:
-txn OnCompletion
-int NoOp
-==
-bnz main_l12
-err
-main_l12:
 txn ApplicationID
 int 0
 ==
 assert
-byte "dun"
-byte "NULL"
-app_global_put
-byte "dun_no"
-int 0
-app_global_put
-byte "state"
-byte "NULL_STATE"
-app_global_put
 int 1
 return
 
-// add_candidate
-addcandidate_0:
-proto 3 0
-byte "dun"
-frame_dig -3
-extract 2 0
-app_global_put
-byte "dun_no"
-frame_dig -2
-app_global_put
-byte "state"
-frame_dig -1
-extract 2 0
-app_global_put
-retsub
-
-// read_dun
-readdun_1:
-proto 0 1
-byte ""
-byte "dun"
-app_global_get
-frame_bury 0
-frame_dig 0
-len
+// candidates_info_to_contract
+candidatesinfotocontract_0:
+proto 2 0
+txn Sender
+byte "EBJXMYTRWL2BQLKK4BXYFOPN5R45UDLAIUANNOBM3CU7EW5AQLU6FXGPRI"
+==
+txn ApplicationID
+int 0
+==
+&&
+txn ApplicationID
 itob
-extract 6 0
-frame_dig 0
-concat
-frame_bury 0
+txn Sender
+!=
+&&
+bnz candidatesinfotocontract_0_l2
+txn Sender
+byte "candidate_dun_no"
+frame_dig -1
+app_local_put
+b candidatesinfotocontract_0_l3
+candidatesinfotocontract_0_l2:
+txn Sender
+byte "candidate_name"
+frame_dig -2
+extract 2 0
+app_local_put
+candidatesinfotocontract_0_l3:
 retsub
 
-// read_dun_no
-readdunno_2:
+// get_candidate_name
+getcandidatename_1:
 proto 0 1
 int 0
-byte "dun_no"
-app_global_get
+txn Sender
+byte "candidate_dun_no"
+app_local_get
 frame_bury 0
 frame_dig 0
 int 256
@@ -136,77 +105,33 @@ int 256
 assert
 retsub
 
-// read_state
-readstate_3:
-proto 0 1
-byte ""
-byte "state"
-app_global_get
-frame_bury 0
-frame_dig 0
-len
-itob
-extract 6 0
-frame_dig 0
-concat
-frame_bury 0
-retsub
-
-// add_candidate_caster
-addcandidatecaster_4:
+// candidates_info_to_contract_caster
+candidatesinfotocontractcaster_2:
 proto 0 0
 byte ""
 int 0
-byte ""
 txna ApplicationArgs 1
 frame_bury 0
 txna ApplicationArgs 2
 int 0
 getbyte
 frame_bury 1
-txna ApplicationArgs 3
-frame_bury 2
 frame_dig 0
 frame_dig 1
-frame_dig 2
-callsub addcandidate_0
+callsub candidatesinfotocontract_0
 retsub
 
-// read_dun_caster
-readduncaster_5:
-proto 0 0
-byte ""
-callsub readdun_1
-frame_bury 0
-byte 0x151f7c75
-frame_dig 0
-concat
-log
-retsub
-
-// read_dun_no_caster
-readdunnocaster_6:
+// get_candidate_name_caster
+getcandidatenamecaster_3:
 proto 0 0
 int 0
-callsub readdunno_2
+callsub getcandidatename_1
 frame_bury 0
 byte 0x151f7c75
 byte 0x00
 int 0
 frame_dig 0
 setbyte
-concat
-log
-retsub
-
-// read_state_caster
-readstatecaster_7:
-proto 0 0
-byte ""
-callsub readstate_3
-frame_bury 0
-byte 0x151f7c75
-frame_dig 0
 concat
 log
 retsub

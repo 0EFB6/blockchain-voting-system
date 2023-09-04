@@ -2,19 +2,15 @@
   "name": "candidates",
   "methods": [
     {
-      "name": "add_candidate",
+      "name": "candidates_info_to_contract",
       "args": [
         {
           "type": "string",
-          "name": "dun"
+          "name": "name"
         },
         {
           "type": "uint8",
           "name": "dun_no"
-        },
-        {
-          "type": "string",
-          "name": "state"
         }
       ],
       "returns": {
@@ -22,24 +18,10 @@
       }
     },
     {
-      "name": "read_dun",
-      "args": [],
-      "returns": {
-        "type": "string"
-      }
-    },
-    {
-      "name": "read_dun_no",
+      "name": "get_candidate_name",
       "args": [],
       "returns": {
         "type": "uint8"
-      }
-    },
-    {
-      "name": "read_state",
-      "args": [],
-      "returns": {
-        "type": "string"
       }
     }
   ],
