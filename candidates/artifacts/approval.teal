@@ -1,0 +1,120 @@
+#pragma version 8
+txn NumAppArgs
+int 0
+==
+bnz main_l6
+txna ApplicationArgs 0
+method "add_candidate(string,uint64,string)void"
+==
+bnz main_l5
+txna ApplicationArgs 0
+method "read()string"
+==
+bnz main_l4
+err
+main_l4:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub readcaster_3
+int 1
+return
+main_l5:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub addcandidatecaster_2
+int 1
+return
+main_l6:
+txn OnCompletion
+int NoOp
+==
+bnz main_l8
+err
+main_l8:
+txn ApplicationID
+int 0
+==
+assert
+byte "dun"
+byte "N/A"
+app_global_put
+byte "dun_no"
+int 0
+app_global_put
+int 1
+return
+
+// add_candidate
+addcandidate_0:
+proto 3 0
+byte "dun"
+frame_dig -3
+extract 2 0
+app_global_put
+byte "dun_no"
+frame_dig -2
+app_global_put
+byte "state"
+frame_dig -1
+extract 2 0
+app_global_put
+retsub
+
+// read
+read_1:
+proto 0 1
+byte ""
+byte "dun"
+app_global_get
+frame_bury 0
+frame_dig 0
+len
+itob
+extract 6 0
+frame_dig 0
+concat
+frame_bury 0
+retsub
+
+// add_candidate_caster
+addcandidatecaster_2:
+proto 0 0
+byte ""
+int 0
+byte ""
+txna ApplicationArgs 1
+frame_bury 0
+txna ApplicationArgs 2
+btoi
+frame_bury 1
+txna ApplicationArgs 3
+frame_bury 2
+frame_dig 0
+frame_dig 1
+frame_dig 2
+callsub addcandidate_0
+retsub
+
+// read_caster
+readcaster_3:
+proto 0 0
+byte ""
+callsub read_1
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+concat
+log
+retsub

@@ -1,0 +1,33 @@
+{
+  "name": "candidates",
+  "methods": [
+    {
+      "name": "add_candidate",
+      "args": [
+        {
+          "type": "string",
+          "name": "dun"
+        },
+        {
+          "type": "uint64",
+          "name": "dun_no"
+        },
+        {
+          "type": "string",
+          "name": "state"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "read",
+      "args": [],
+      "returns": {
+        "type": "string"
+      }
+    }
+  ],
+  "networks": {}
+}
