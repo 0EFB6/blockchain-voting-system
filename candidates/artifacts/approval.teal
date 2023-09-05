@@ -2,28 +2,20 @@
 txn NumAppArgs
 int 0
 ==
-bnz main_l6
+bnz main_l8
 txna ApplicationArgs 0
 method "candidates_info_to_contract(string,uint8)void"
 ==
-bnz main_l5
+bnz main_l7
 txna ApplicationArgs 0
-method "get_candidate_name()uint8"
+method "read_candidate_name()string"
 ==
-bnz main_l4
+bnz main_l6
+txna ApplicationArgs 0
+method "read_dun_no()uint8"
+==
+bnz main_l5
 err
-main_l4:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub getcandidatenamecaster_3
-int 1
-return
 main_l5:
 txn OnCompletion
 int NoOp
@@ -33,27 +25,51 @@ int 0
 !=
 &&
 assert
-callsub candidatesinfotocontractcaster_2
+callsub readdunnocaster_5
 int 1
 return
 main_l6:
 txn OnCompletion
 int NoOp
 ==
-bnz main_l10
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub readcandidatenamecaster_4
+int 1
+return
+main_l7:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub candidatesinfotocontractcaster_3
+int 1
+return
+main_l8:
+txn OnCompletion
+int NoOp
+==
+bnz main_l12
 txn OnCompletion
 int OptIn
 ==
-bnz main_l9
+bnz main_l11
 err
-main_l9:
+main_l11:
 txn ApplicationID
 int 0
 !=
 assert
 int 1
 return
-main_l10:
+main_l12:
 txn ApplicationID
 int 0
 ==
@@ -64,13 +80,9 @@ return
 // candidates_info_to_contract
 candidatesinfotocontract_0:
 proto 2 0
-txn Sender
-byte "EBJXMYTRWL2BQLKK4BXYFOPN5R45UDLAIUANNOBM3CU7EW5AQLU6FXGPRI"
-==
 txn ApplicationID
 int 0
 ==
-&&
 txn ApplicationID
 itob
 txn Sender
@@ -91,8 +103,25 @@ app_local_put
 candidatesinfotocontract_0_l3:
 retsub
 
-// get_candidate_name
-getcandidatename_1:
+// read_candidate_name
+readcandidatename_1:
+proto 0 1
+byte ""
+txn Sender
+byte "candidate_name"
+app_local_get
+frame_bury 0
+frame_dig 0
+len
+itob
+extract 6 0
+frame_dig 0
+concat
+frame_bury 0
+retsub
+
+// read_dun_no
+readdunno_2:
 proto 0 1
 int 0
 txn Sender
@@ -106,7 +135,7 @@ assert
 retsub
 
 // candidates_info_to_contract_caster
-candidatesinfotocontractcaster_2:
+candidatesinfotocontractcaster_3:
 proto 0 0
 byte ""
 int 0
@@ -121,11 +150,23 @@ frame_dig 1
 callsub candidatesinfotocontract_0
 retsub
 
-// get_candidate_name_caster
-getcandidatenamecaster_3:
+// read_candidate_name_caster
+readcandidatenamecaster_4:
+proto 0 0
+byte ""
+callsub readcandidatename_1
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+concat
+log
+retsub
+
+// read_dun_no_caster
+readdunnocaster_5:
 proto 0 0
 int 0
-callsub getcandidatename_1
+callsub readdunno_2
 frame_bury 0
 byte 0x151f7c75
 byte 0x00

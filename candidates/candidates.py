@@ -19,9 +19,9 @@ router = Router(
 def candidates_info_to_contract(name: abi.String, dun_no: abi.Uint8):
 	k_name = Bytes("candidate_name")
 	k_dun_no = Bytes("candidate_dun_no")
-	is_sender = Txn.sender() == Bytes("EBJXMYTRWL2BQLKK4BXYFOPN5R45UDLAIUANNOBM3CU7EW5AQLU6FXGPRI")
+	#is_sender = Txn.sender() == Bytes("XQXKHY2TCU54QSOWYCI7J6EF2Z2VU4OMYGD62X24KXJIBXLLU6IAF4LCDM")
 	check = And(
-		is_sender,
+		#is_sender,
 		Txn.application_id() == Int(0),
 		Itob(Txn.application_id()) != Txn.sender()
 	)
@@ -36,8 +36,13 @@ def candidates_info_to_contract(name: abi.String, dun_no: abi.Uint8):
 	return on_creation
 
 @router.method
-def get_candidate_name(*, output: abi.Uint8):
+def read_candidate_name(*, output: abi.String):
+	return output.set(App.localGet(Txn.sender(), Bytes("candidate_name")))
+
+@router.method
+def read_dun_no(*, output: abi.Uint8):
 	return output.set(App.localGet(Txn.sender(), Bytes("candidate_dun_no")))
+
 
 #@router.method
 #def get_candidate_dun_no(*, output:abi.Uint8):

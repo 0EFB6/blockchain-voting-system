@@ -18,7 +18,14 @@
       }
     },
     {
-      "name": "get_candidate_name",
+      "name": "read_candidate_name",
+      "args": [],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "read_dun_no",
       "args": [],
       "returns": {
         "type": "uint8"
