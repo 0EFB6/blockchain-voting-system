@@ -3,26 +3,19 @@ from pyteal import *
 k_name = Bytes("candidate_name")
 k_dun_no = Bytes("candidate_dun_no")
 
-#handle_creation = Seq(
-#	App.globalPut(Bytes("dun"), Bytes("NULL")),
-#	App.globalPut(Bytes("dun_no"), Int(0)),
-#	App.globalPut(Bytes("state"), Bytes("NULL_STATE")),
-#	Approve()
-#)
-
 router = Router(
 	"candidates",
 	BareCallActions(
 		no_op=OnCompleteAction.create_only(Approve()),
-		opt_in=OnCompleteAction.call_only(Approve()),
-	),
+		opt_in=OnCompleteAction.call_only(Approve())
+	)
 )
 
 @router.method
 def candidates_info_to_contract(name: abi.String, dun_no: abi.Uint8):
 	return Seq(
 	 	App.localPut(Txn.sender(), k_name, name.get()),
-		App.localPut(Txn.sender(), k_dun_no, dun_no.get()),
+		App.localPut(Txn.sender(), k_dun_no, dun_no.get())
 	)
 
 @router.method
