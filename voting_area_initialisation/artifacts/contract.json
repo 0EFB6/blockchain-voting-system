@@ -1,5 +1,5 @@
 {
-  "name": "candidates",
+  "name": "voting_area_initialisation",
   "methods": [
     {
       "name": "init_dun",

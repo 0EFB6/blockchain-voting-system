@@ -11,7 +11,7 @@ k_c_name = Bytes("c_name")
 k_party = Bytes("party")
 
 router = Router(
-	"candidates",
+	"voting_area_initialisation",
 	BareCallActions(
 		no_op=OnCompleteAction.create_only(Approve()),
 		opt_in=OnCompleteAction.call_only(Approve())
