@@ -80,6 +80,14 @@ return
 // candidates_info_to_contract
 candidatesinfotocontract_0:
 proto 2 0
+frame_dig -1
+int 0
+>
+frame_dig -1
+int 223
+<
+&&
+bz candidatesinfotocontract_0_l2
 txn Sender
 byte "candidate_name"
 frame_dig -2
@@ -89,6 +97,7 @@ txn Sender
 byte "candidate_dun_no"
 frame_dig -1
 app_local_put
+candidatesinfotocontract_0_l2:
 retsub
 
 // read_candidate_name

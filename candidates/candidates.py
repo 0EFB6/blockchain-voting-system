@@ -13,10 +13,26 @@ router = Router(
 
 @router.method
 def candidates_info_to_contract(name: abi.String, dun_no: abi.Uint8):
-	return Seq(
-	 	App.localPut(Txn.sender(), k_name, name.get()),
-		App.localPut(Txn.sender(), k_dun_no, dun_no.get())
+	is_valid_name = And(
+		Len(name.get()) >= Int(0),
+		Len(name.get()) <= Int(48)
 	)
+	is_valid_dun_no = And(
+		dun_no.get() > Int(0),
+		dun_no.get() < Int(223)
+	)
+	check = And(
+		is_valid_name,
+		is_valid_dun_no
+	)
+	ret = If(
+		check,
+		Seq(
+			App.localPut(Txn.sender(), k_name, name.get()),
+			App.localPut(Txn.sender(), k_dun_no, dun_no.get())
+		)
+	)
+	return ret
 
 @router.method
 def read_candidate_name(*, output: abi.String):
