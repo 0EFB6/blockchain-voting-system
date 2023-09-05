@@ -1,7 +1,14 @@
 from pyteal import *
 
-k_name = Bytes("candidate_name")
-k_dun_no = Bytes("candidate_dun_no")
+# init_dun = State seats inforamtion (DUN, DUN number, state)
+# init_dun_candidate = State seats candidate information
+# 						(candidate name, party)
+
+k_dun = Bytes("dun")
+k_dun_no = Bytes("dun_no")
+k_state = Bytes("state")
+k_c_name = Bytes("c_name")
+k_party = Bytes("party")
 
 router = Router(
 	"candidates",
@@ -12,35 +19,81 @@ router = Router(
 )
 
 @router.method
-def candidates_info_to_contract(name: abi.String, dun_no: abi.Uint8):
-	is_valid_name = And(
-		Len(name.get()) >= Int(0),
-		Len(name.get()) <= Int(48)
+def init_dun(dun: abi.String, n: abi.Uint8, state: abi.String):
+	is_valid_dun = And(
+		Len(dun.get()) >= Int(0),
+		Len(dun.get()) <= Int(20)
 	)
 	is_valid_dun_no = And(
-		dun_no.get() > Int(0),
-		dun_no.get() < Int(223)
+		n.get() > Int(0),
+		n.get() < Int(83)
+	)
+	is_valid_state = And(
+		Len(state.get()) >= Int(0),
+		Len(state.get()) <= Int(15)
 	)
 	check = And(
-		is_valid_name,
-		is_valid_dun_no
+		is_valid_dun,
+		is_valid_dun_no,
+		is_valid_state
 	)
 	ret = If(
 		check,
 		Seq(
-			App.localPut(Txn.sender(), k_name, name.get()),
-			App.localPut(Txn.sender(), k_dun_no, dun_no.get())
+			App.localPut(Txn.sender(), k_dun, dun.get()),
+			App.localPut(Txn.sender(), k_dun_no, n.get()),
+			App.localPut(Txn.sender(), k_state, state.get())
 		)
 	)
 	return ret
 
 @router.method
-def read_candidate_name(*, output: abi.String):
-	return output.set(App.localGet(Txn.sender(), Bytes("candidate_name")))
+def init_dun_candidate(name: abi.String, party: abi.String):
+	is_valid_name = And(
+		Len(name.get()) >= Int(0),
+		Len(name.get()) <= Int(40)
+	)
+	is_valid_party = And(
+		Len(party.get()) >= Int(0),
+		Len(party.get()) <= Int(20)
+	)
+	check = And(
+		is_valid_name,
+		is_valid_party
+	)
+	ret = If(
+		check,
+		Seq(
+			App.localPut(Txn.sender(), k_c_name, name.get()),
+			App.localPut(Txn.sender(), k_party, party.get())
+		)
+	)
+	return ret
+
+@router.method
+def read_dun(*, output: abi.String):
+	ret = App.localGet(Txn.sender(), k_dun)
+	return output.set(ret)
 
 @router.method
 def read_dun_no(*, output: abi.Uint8):
-	return output.set(App.localGet(Txn.sender(), Bytes("candidate_dun_no")))
+	ret = App.localGet(Txn.sender(), k_dun_no)
+	return output.set(ret)
+
+@router.method
+def read_state(*, output: abi.String):
+	ret = App.localGet(Txn.sender(), k_state)
+	return output.set(ret)
+
+@router.method
+def read_c_name(*, output: abi.String):
+	ret = App.localGet(Txn.sender(), k_c_name)
+	return output.set(ret)
+
+@router.method
+def read_party(*, output: abi.String):
+	ret = App.localGet(Txn.sender(), k_party)
+	return output.set(ret)
 
 if __name__ == "__main__":
 	import os

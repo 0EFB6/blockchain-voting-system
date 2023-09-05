@@ -2,15 +2,19 @@
   "name": "candidates",
   "methods": [
     {
-      "name": "candidates_info_to_contract",
+      "name": "init_dun",
       "args": [
         {
           "type": "string",
-          "name": "name"
+          "name": "dun"
         },
         {
           "type": "uint8",
-          "name": "dun_no"
+          "name": "n"
+        },
+        {
+          "type": "string",
+          "name": "state"
         }
       ],
       "returns": {
@@ -18,7 +22,23 @@
       }
     },
     {
-      "name": "read_candidate_name",
+      "name": "init_dun_candidate",
+      "args": [
+        {
+          "type": "string",
+          "name": "name"
+        },
+        {
+          "type": "string",
+          "name": "party"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "read_dun",
       "args": [],
       "returns": {
         "type": "string"
@@ -29,6 +49,27 @@
       "args": [],
       "returns": {
         "type": "uint8"
+      }
+    },
+    {
+      "name": "read_state",
+      "args": [],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "read_c_name",
+      "args": [],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "read_party",
+      "args": [],
+      "returns": {
+        "type": "string"
       }
     }
   ],
