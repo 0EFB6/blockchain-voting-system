@@ -4,7 +4,7 @@ int 0
 ==
 bnz main_l6
 txna ApplicationArgs 0
-method "vote(uint8,string)void"
+method "vote(uint8,address)void"
 ==
 bnz main_l5
 txna ApplicationArgs 0
@@ -70,11 +70,6 @@ int 0
 frame_dig -2
 int 8
 <
-&&
-frame_dig -1
-extract 2 0
-txn Sender
-==
 &&
 bz vote_0_l2
 txn Sender

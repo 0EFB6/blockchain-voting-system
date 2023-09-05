@@ -1,4 +1,5 @@
 from pyteal import *
+from algosdk import encoding
 
 k_vote_id_dun = Bytes("vote_id_dun")
 k_vote_id_par = Bytes("vote_id_par")
@@ -12,15 +13,17 @@ router = Router(
 )
 
 @router.method
-def vote(id: abi.Uint8, voting_key: abi.String):
+def vote(id: abi.Uint8, voting_key: abi.Address):
 	is_valid_id = And(
 		id.get() > Int(0),
 		id.get() < Int(8)
 	)
-	is_valid_party = voting_key.get() == Txn.sender()
+	# Fak, how to solve??
+	lol = encoding.decode_address(Addr(Txn.sender()))
+	#is_valid_key = voting_key == Txn.sender()
 	check = And(
 		is_valid_id,
-		is_valid_party
+		#is_valid_key
 	)
 	ret = If(
 		check,

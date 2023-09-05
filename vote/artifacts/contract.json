@@ -9,7 +9,7 @@
           "name": "id"
         },
         {
-          "type": "string",
+          "type": "address",
           "name": "voting_key"
         }
       ],
