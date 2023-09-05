@@ -22,7 +22,27 @@
       }
     },
     {
-      "name": "init_dun_candidate",
+      "name": "init_parliament",
+      "args": [
+        {
+          "type": "string",
+          "name": "parliamen"
+        },
+        {
+          "type": "uint8",
+          "name": "n"
+        },
+        {
+          "type": "string",
+          "name": "state"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "init_candidate",
       "args": [
         {
           "type": "string",
@@ -46,6 +66,20 @@
     },
     {
       "name": "read_dun_no",
+      "args": [],
+      "returns": {
+        "type": "uint8"
+      }
+    },
+    {
+      "name": "read_parliament",
+      "args": [],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "read_parliament_no",
       "args": [],
       "returns": {
         "type": "uint8"

@@ -2,72 +2,48 @@
 txn NumAppArgs
 int 0
 ==
-bnz main_l16
+bnz main_l22
 txna ApplicationArgs 0
 method "init_dun(string,uint8,string)void"
 ==
-bnz main_l15
+bnz main_l21
 txna ApplicationArgs 0
-method "init_dun_candidate(string,string)void"
+method "init_parliament(string,uint8,string)void"
 ==
-bnz main_l14
+bnz main_l20
+txna ApplicationArgs 0
+method "init_candidate(string,string)void"
+==
+bnz main_l19
 txna ApplicationArgs 0
 method "read_dun()string"
 ==
-bnz main_l13
+bnz main_l18
 txna ApplicationArgs 0
 method "read_dun_no()uint8"
 ==
-bnz main_l12
+bnz main_l17
+txna ApplicationArgs 0
+method "read_parliament()string"
+==
+bnz main_l16
+txna ApplicationArgs 0
+method "read_parliament_no()uint8"
+==
+bnz main_l15
 txna ApplicationArgs 0
 method "read_state()string"
 ==
-bnz main_l11
+bnz main_l14
 txna ApplicationArgs 0
 method "read_c_name()string"
 ==
-bnz main_l10
+bnz main_l13
 txna ApplicationArgs 0
 method "read_party()string"
 ==
-bnz main_l9
+bnz main_l12
 err
-main_l9:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub readpartycaster_13
-int 1
-return
-main_l10:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub readcnamecaster_12
-int 1
-return
-main_l11:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub readstatecaster_11
-int 1
-return
 main_l12:
 txn OnCompletion
 int NoOp
@@ -77,7 +53,7 @@ int 0
 !=
 &&
 assert
-callsub readdunnocaster_10
+callsub readpartycaster_19
 int 1
 return
 main_l13:
@@ -89,7 +65,7 @@ int 0
 !=
 &&
 assert
-callsub readduncaster_9
+callsub readcnamecaster_18
 int 1
 return
 main_l14:
@@ -101,7 +77,7 @@ int 0
 !=
 &&
 assert
-callsub initduncandidatecaster_8
+callsub readstatecaster_17
 int 1
 return
 main_l15:
@@ -113,27 +89,99 @@ int 0
 !=
 &&
 assert
-callsub initduncaster_7
+callsub readparliamentnocaster_16
 int 1
 return
 main_l16:
 txn OnCompletion
 int NoOp
 ==
-bnz main_l20
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub readparliamentcaster_15
+int 1
+return
+main_l17:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub readdunnocaster_14
+int 1
+return
+main_l18:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub readduncaster_13
+int 1
+return
+main_l19:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub initcandidatecaster_12
+int 1
+return
+main_l20:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub initparliamentcaster_11
+int 1
+return
+main_l21:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub initduncaster_10
+int 1
+return
+main_l22:
+txn OnCompletion
+int NoOp
+==
+bnz main_l26
 txn OnCompletion
 int OptIn
 ==
-bnz main_l19
+bnz main_l25
 err
-main_l19:
+main_l25:
 txn ApplicationID
 int 0
 !=
 assert
 int 1
 return
-main_l20:
+main_l26:
 txn ApplicationID
 int 0
 ==
@@ -193,8 +241,60 @@ app_local_put
 initdun_0_l2:
 retsub
 
-// init_dun_candidate
-initduncandidate_1:
+// init_parliament
+initparliament_1:
+proto 3 0
+frame_dig -3
+extract 2 0
+len
+int 0
+>=
+frame_dig -3
+extract 2 0
+len
+int 20
+<=
+&&
+frame_dig -2
+int 0
+>
+frame_dig -2
+int 223
+<
+&&
+&&
+frame_dig -1
+extract 2 0
+len
+int 0
+>=
+frame_dig -1
+extract 2 0
+len
+int 15
+<=
+&&
+&&
+bz initparliament_1_l2
+txn Sender
+byte "parliament"
+frame_dig -3
+extract 2 0
+app_local_put
+txn Sender
+byte "parliament_no"
+frame_dig -2
+app_local_put
+txn Sender
+byte "state"
+frame_dig -1
+extract 2 0
+app_local_put
+initparliament_1_l2:
+retsub
+
+// init_candidate
+initcandidate_2:
 proto 2 0
 frame_dig -2
 extract 2 0
@@ -219,7 +319,7 @@ int 20
 <=
 &&
 &&
-bz initduncandidate_1_l2
+bz initcandidate_2_l2
 txn Sender
 byte "c_name"
 frame_dig -2
@@ -230,11 +330,11 @@ byte "party"
 frame_dig -1
 extract 2 0
 app_local_put
-initduncandidate_1_l2:
+initcandidate_2_l2:
 retsub
 
 // read_dun
-readdun_2:
+readdun_3:
 proto 0 1
 byte ""
 txn Sender
@@ -251,7 +351,7 @@ frame_bury 0
 retsub
 
 // read_dun_no
-readdunno_3:
+readdunno_4:
 proto 0 1
 int 0
 txn Sender
@@ -264,8 +364,39 @@ int 256
 assert
 retsub
 
+// read_parliament
+readparliament_5:
+proto 0 1
+byte ""
+txn Sender
+byte "parliament"
+app_local_get
+frame_bury 0
+frame_dig 0
+len
+itob
+extract 6 0
+frame_dig 0
+concat
+frame_bury 0
+retsub
+
+// read_parliament_no
+readparliamentno_6:
+proto 0 1
+int 0
+txn Sender
+byte "parliament_no"
+app_local_get
+frame_bury 0
+frame_dig 0
+int 256
+<
+assert
+retsub
+
 // read_state
-readstate_4:
+readstate_7:
 proto 0 1
 byte ""
 txn Sender
@@ -282,7 +413,7 @@ frame_bury 0
 retsub
 
 // read_c_name
-readcname_5:
+readcname_8:
 proto 0 1
 byte ""
 txn Sender
@@ -299,7 +430,7 @@ frame_bury 0
 retsub
 
 // read_party
-readparty_6:
+readparty_9:
 proto 0 1
 byte ""
 txn Sender
@@ -316,7 +447,7 @@ frame_bury 0
 retsub
 
 // init_dun_caster
-initduncaster_7:
+initduncaster_10:
 proto 0 0
 byte ""
 int 0
@@ -335,8 +466,28 @@ frame_dig 2
 callsub initdun_0
 retsub
 
-// init_dun_candidate_caster
-initduncandidatecaster_8:
+// init_parliament_caster
+initparliamentcaster_11:
+proto 0 0
+byte ""
+int 0
+byte ""
+txna ApplicationArgs 1
+frame_bury 0
+txna ApplicationArgs 2
+int 0
+getbyte
+frame_bury 1
+txna ApplicationArgs 3
+frame_bury 2
+frame_dig 0
+frame_dig 1
+frame_dig 2
+callsub initparliament_1
+retsub
+
+// init_candidate_caster
+initcandidatecaster_12:
 proto 0 0
 byte ""
 dup
@@ -346,14 +497,14 @@ txna ApplicationArgs 2
 frame_bury 1
 frame_dig 0
 frame_dig 1
-callsub initduncandidate_1
+callsub initcandidate_2
 retsub
 
 // read_dun_caster
-readduncaster_9:
+readduncaster_13:
 proto 0 0
 byte ""
-callsub readdun_2
+callsub readdun_3
 frame_bury 0
 byte 0x151f7c75
 frame_dig 0
@@ -362,10 +513,37 @@ log
 retsub
 
 // read_dun_no_caster
-readdunnocaster_10:
+readdunnocaster_14:
 proto 0 0
 int 0
-callsub readdunno_3
+callsub readdunno_4
+frame_bury 0
+byte 0x151f7c75
+byte 0x00
+int 0
+frame_dig 0
+setbyte
+concat
+log
+retsub
+
+// read_parliament_caster
+readparliamentcaster_15:
+proto 0 0
+byte ""
+callsub readparliament_5
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+concat
+log
+retsub
+
+// read_parliament_no_caster
+readparliamentnocaster_16:
+proto 0 0
+int 0
+callsub readparliamentno_6
 frame_bury 0
 byte 0x151f7c75
 byte 0x00
@@ -377,10 +555,10 @@ log
 retsub
 
 // read_state_caster
-readstatecaster_11:
+readstatecaster_17:
 proto 0 0
 byte ""
-callsub readstate_4
+callsub readstate_7
 frame_bury 0
 byte 0x151f7c75
 frame_dig 0
@@ -389,10 +567,10 @@ log
 retsub
 
 // read_c_name_caster
-readcnamecaster_12:
+readcnamecaster_18:
 proto 0 0
 byte ""
-callsub readcname_5
+callsub readcname_8
 frame_bury 0
 byte 0x151f7c75
 frame_dig 0
@@ -401,10 +579,10 @@ log
 retsub
 
 // read_party_caster
-readpartycaster_13:
+readpartycaster_19:
 proto 0 0
 byte ""
-callsub readparty_6
+callsub readparty_9
 frame_bury 0
 byte 0x151f7c75
 frame_dig 0

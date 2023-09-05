@@ -6,6 +6,8 @@ from pyteal import *
 
 k_dun = Bytes("dun")
 k_dun_no = Bytes("dun_no")
+k_parliament = Bytes("parliament")
+k_parliament_no = Bytes("parliament_no")
 k_state = Bytes("state")
 k_c_name = Bytes("c_name")
 k_party = Bytes("party")
@@ -48,7 +50,36 @@ def init_dun(dun: abi.String, n: abi.Uint8, state: abi.String):
 	return ret
 
 @router.method
-def init_dun_candidate(name: abi.String, party: abi.String):
+def init_parliament(parliamen: abi.String, n: abi.Uint8, state: abi.String):
+	is_valid_parliamen = And(
+		Len(parliamen.get()) >= Int(0),
+		Len(parliamen.get()) <= Int(20)
+	)
+	is_valid_parliamen_no = And(
+		n.get() > Int(0),
+		n.get() < Int(223)
+	)
+	is_valid_state = And(
+		Len(state.get()) >= Int(0),
+		Len(state.get()) <= Int(15)
+	)
+	check = And(
+		is_valid_parliamen,
+		is_valid_parliamen_no,
+		is_valid_state
+	)
+	ret = If(
+		check,
+		Seq(
+			App.localPut(Txn.sender(), k_parliament, parliamen.get()),
+			App.localPut(Txn.sender(), k_parliament_no, n.get()),
+			App.localPut(Txn.sender(), k_state, state.get())
+		)
+	)
+	return ret
+
+@router.method
+def init_candidate(name: abi.String, party: abi.String):
 	is_valid_name = And(
 		Len(name.get()) >= Int(0),
 		Len(name.get()) <= Int(40)
@@ -78,6 +109,16 @@ def read_dun(*, output: abi.String):
 @router.method
 def read_dun_no(*, output: abi.Uint8):
 	ret = App.localGet(Txn.sender(), k_dun_no)
+	return output.set(ret)
+
+@router.method
+def read_parliament(*, output: abi.String):
+	ret = App.localGet(Txn.sender(), k_parliament)
+	return output.set(ret)
+
+@router.method
+def read_parliament_no(*, output: abi.Uint8):
+	ret = App.localGet(Txn.sender(), k_parliament_no)
 	return output.set(ret)
 
 @router.method
