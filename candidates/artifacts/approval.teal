@@ -80,27 +80,15 @@ return
 // candidates_info_to_contract
 candidatesinfotocontract_0:
 proto 2 0
-txn ApplicationID
-int 0
-==
-txn ApplicationID
-itob
-txn Sender
-!=
-&&
-bnz candidatesinfotocontract_0_l2
-txn Sender
-byte "candidate_dun_no"
-frame_dig -1
-app_local_put
-b candidatesinfotocontract_0_l3
-candidatesinfotocontract_0_l2:
 txn Sender
 byte "candidate_name"
 frame_dig -2
 extract 2 0
 app_local_put
-candidatesinfotocontract_0_l3:
+txn Sender
+byte "candidate_dun_no"
+frame_dig -1
+app_local_put
 retsub
 
 // read_candidate_name

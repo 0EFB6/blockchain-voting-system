@@ -1,5 +1,8 @@
 from pyteal import *
 
+k_name = Bytes("candidate_name")
+k_dun_no = Bytes("candidate_dun_no")
+
 #handle_creation = Seq(
 #	App.globalPut(Bytes("dun"), Bytes("NULL")),
 #	App.globalPut(Bytes("dun_no"), Int(0)),
@@ -17,23 +20,10 @@ router = Router(
 
 @router.method
 def candidates_info_to_contract(name: abi.String, dun_no: abi.Uint8):
-	k_name = Bytes("candidate_name")
-	k_dun_no = Bytes("candidate_dun_no")
-	#is_sender = Txn.sender() == Bytes("XQXKHY2TCU54QSOWYCI7J6EF2Z2VU4OMYGD62X24KXJIBXLLU6IAF4LCDM")
-	check = And(
-		#is_sender,
-		Txn.application_id() == Int(0),
-		Itob(Txn.application_id()) != Txn.sender()
+	return Seq(
+	 	App.localPut(Txn.sender(), k_name, name.get()),
+		App.localPut(Txn.sender(), k_dun_no, dun_no.get()),
 	)
-
-	on_creation = Seq(
-		If(check,
-	 		App.localPut(Txn.sender(), k_name, name.get()),
-			App.localPut(Txn.sender(), k_dun_no, dun_no.get()),
-		),
-	)
-
-	return on_creation
 
 @router.method
 def read_candidate_name(*, output: abi.String):
@@ -42,31 +32,6 @@ def read_candidate_name(*, output: abi.String):
 @router.method
 def read_dun_no(*, output: abi.Uint8):
 	return output.set(App.localGet(Txn.sender(), Bytes("candidate_dun_no")))
-
-
-#@router.method
-#def get_candidate_dun_no(*, output:abi.Uint8):
-#	return output.set(App.globalGet(Bytes("candidate_dun_no")))
-#
-#@router.method
-#def add_candidate(dun: abi.String, dun_no: abi.Uint8, state: abi.String):
-#	return Seq(
-#		App.globalPut(Bytes("dun"), dun.get()),
-#		App.globalPut(Bytes("dun_no"), dun_no.get()),
-#		App.globalPut(Bytes("state"), state.get()),
-#	)
-#
-#@router.method
-#def read_dun(*, output:abi.String):
-#	return output.set(App.globalGet(Bytes("dun")))
-#
-#@router.method
-#def read_dun_no(*, output:abi.Uint8):
-#	return output.set(App.globalGet(Bytes("dun_no")))
-#
-#@router.method
-#def read_state(*, output:abi.String):
-#	return output.set(App.globalGet(Bytes("state")))
 
 if __name__ == "__main__":
 	import os
