@@ -13,6 +13,24 @@ router = Router(
 )
 
 @router.method
+def create_box():
+	return Seq(
+		Pop(App.box_create(Bytes("dun"), Int(100))),
+		Pop(App.box_create(Bytes("dun_no"), Int(100)))
+	)
+
+@router.method
+def test_abi(dun: abi.String, dun_no: abi.String):
+	return Seq(
+		App.box_replace(Bytes("dun"), Int(0), dun.get()),
+		App.box_replace(Bytes("dun_no"), Int(0), dun_no.get())
+	)
+
+@router.method
+def read_abi(*, output: abi.String):
+	return output.set(App.box_extract(Bytes("dun"), Int(0), Int(10)))
+
+@router.method
 def increment():
 	scratchCount = ScratchVar(TealType.uint64)
 	return Seq(

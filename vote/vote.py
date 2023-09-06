@@ -13,21 +13,17 @@ router = Router(
 )
 
 @router.method
-def vote(id: abi.Uint8, voting_key: abi.Address):
-	is_valid_id = And(
-		id.get() > Int(0),
-		id.get() < Int(8)
-	)
-	# Fak, how to solve??
-	lol = encoding.decode_address(Addr(Txn.sender()))
-	#is_valid_key = voting_key == Txn.sender()
-	check = And(
-		is_valid_id,
-		#is_valid_key
-	)
-	ret = If(
-		check,
-		App.localPut(Txn.sender(), k_vote_id_dun, id.get())
+def vote(id: abi.Uint64, voting_key: abi.Account, *, output: abi.String):
+	ret = Seq(
+		Assert(id.get() > Int(0)),
+		Assert(id.get() < Int(8)),
+		# Fak, how to solve??
+		#lol = encoding.decode_address(Addr(Txn.sender()))
+		If(
+			voting_key.address() == Txn.sender(),
+			App.localPut(Txn.sender(), k_vote_id_dun, id.get()),
+			output.set(Bytes("Invalid key/id"))
+		)
 	)
 	return ret
 

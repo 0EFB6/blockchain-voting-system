@@ -5,16 +5,16 @@
       "name": "vote",
       "args": [
         {
-          "type": "uint8",
+          "type": "uint64",
           "name": "id"
         },
         {
-          "type": "address",
+          "type": "account",
           "name": "voting_key"
         }
       ],
       "returns": {
-        "type": "void"
+        "type": "string"
       }
     },
     {

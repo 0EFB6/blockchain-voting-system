@@ -2,63 +2,111 @@
 txn NumAppArgs
 int 0
 ==
-bnz main_l8
+bnz main_l14
+txna ApplicationArgs 0
+method "create_box()void"
+==
+bnz main_l13
+txna ApplicationArgs 0
+method "test_abi(string,string)void"
+==
+bnz main_l12
+txna ApplicationArgs 0
+method "read_abi()string"
+==
+bnz main_l11
 txna ApplicationArgs 0
 method "increment()void"
 ==
-bnz main_l7
+bnz main_l10
 txna ApplicationArgs 0
 method "decrement()void"
 ==
-bnz main_l6
+bnz main_l9
 txna ApplicationArgs 0
 method "read_count()uint64"
 ==
-bnz main_l5
+bnz main_l8
 err
-main_l5:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub readcountcaster_5
-int 1
-return
-main_l6:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub decrementcaster_4
-int 1
-return
-main_l7:
-txn OnCompletion
-int NoOp
-==
-txn ApplicationID
-int 0
-!=
-&&
-assert
-callsub incrementcaster_3
-int 1
-return
 main_l8:
 txn OnCompletion
 int NoOp
 ==
-bnz main_l10
-err
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub readcountcaster_11
+int 1
+return
+main_l9:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub decrementcaster_10
+int 1
+return
 main_l10:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub incrementcaster_9
+int 1
+return
+main_l11:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub readabicaster_8
+int 1
+return
+main_l12:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub testabicaster_7
+int 1
+return
+main_l13:
+txn OnCompletion
+int NoOp
+==
+txn ApplicationID
+int 0
+!=
+&&
+assert
+callsub createboxcaster_6
+int 1
+return
+main_l14:
+txn OnCompletion
+int NoOp
+==
+bnz main_l16
+err
+main_l16:
 txn ApplicationID
 int 0
 ==
@@ -69,8 +117,54 @@ app_global_put
 int 1
 return
 
+// create_box
+createbox_0:
+proto 0 0
+byte "dun"
+int 100
+box_create
+pop
+byte "dun_no"
+int 100
+box_create
+pop
+retsub
+
+// test_abi
+testabi_1:
+proto 2 0
+byte "dun"
+int 0
+frame_dig -2
+extract 2 0
+box_replace
+byte "dun_no"
+int 0
+frame_dig -1
+extract 2 0
+box_replace
+retsub
+
+// read_abi
+readabi_2:
+proto 0 1
+byte ""
+byte "dun"
+int 0
+int 10
+box_extract
+frame_bury 0
+frame_dig 0
+len
+itob
+extract 6 0
+frame_dig 0
+concat
+frame_bury 0
+retsub
+
 // increment
-increment_0:
+increment_3:
 proto 0 0
 byte "count"
 app_global_get
@@ -83,7 +177,7 @@ app_global_put
 retsub
 
 // decrement
-decrement_1:
+decrement_4:
 proto 0 0
 global GroupSize
 int 1
@@ -95,17 +189,17 @@ store 1
 load 1
 int 0
 >
-bz decrement_1_l2
+bz decrement_4_l2
 byte "count"
 load 1
 int 1
 -
 app_global_put
-decrement_1_l2:
+decrement_4_l2:
 retsub
 
 // read_count
-readcount_2:
+readcount_5:
 proto 0 1
 int 0
 byte "count"
@@ -113,23 +207,55 @@ app_global_get
 frame_bury 0
 retsub
 
-// increment_caster
-incrementcaster_3:
+// create_box_caster
+createboxcaster_6:
 proto 0 0
-callsub increment_0
+callsub createbox_0
+retsub
+
+// test_abi_caster
+testabicaster_7:
+proto 0 0
+byte ""
+dup
+txna ApplicationArgs 1
+frame_bury 0
+txna ApplicationArgs 2
+frame_bury 1
+frame_dig 0
+frame_dig 1
+callsub testabi_1
+retsub
+
+// read_abi_caster
+readabicaster_8:
+proto 0 0
+byte ""
+callsub readabi_2
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+concat
+log
+retsub
+
+// increment_caster
+incrementcaster_9:
+proto 0 0
+callsub increment_3
 retsub
 
 // decrement_caster
-decrementcaster_4:
+decrementcaster_10:
 proto 0 0
-callsub decrement_1
+callsub decrement_4
 retsub
 
 // read_count_caster
-readcountcaster_5:
+readcountcaster_11:
 proto 0 0
 int 0
-callsub readcount_2
+callsub readcount_5
 frame_bury 0
 byte 0x151f7c75
 frame_dig 0

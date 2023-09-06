@@ -4,7 +4,7 @@ int 0
 ==
 bnz main_l6
 txna ApplicationArgs 0
-method "vote(uint8,address)void"
+method "vote(uint64,account)string"
 ==
 bnz main_l5
 txna ApplicationArgs 0
@@ -63,20 +63,37 @@ return
 
 // vote
 vote_0:
-proto 2 0
+proto 2 1
+byte ""
 frame_dig -2
 int 0
 >
+assert
 frame_dig -2
 int 8
 <
-&&
-bz vote_0_l2
+assert
+frame_dig -1
+txnas Accounts
+txn Sender
+==
+bnz vote_0_l2
+byte "Invalid key/id"
+frame_bury 0
+frame_dig 0
+len
+itob
+extract 6 0
+frame_dig 0
+concat
+frame_bury 0
+b vote_0_l3
+vote_0_l2:
 txn Sender
 byte "vote_id_dun"
 frame_dig -2
 app_local_put
-vote_0_l2:
+vote_0_l3:
 retsub
 
 // read_vote
@@ -96,17 +113,24 @@ retsub
 // vote_caster
 votecaster_2:
 proto 0 0
-int 0
 byte ""
+int 0
+dup
 txna ApplicationArgs 1
+btoi
+frame_bury 1
+txna ApplicationArgs 2
 int 0
 getbyte
-frame_bury 0
-txna ApplicationArgs 2
-frame_bury 1
-frame_dig 0
+frame_bury 2
 frame_dig 1
+frame_dig 2
 callsub vote_0
+frame_bury 0
+byte 0x151f7c75
+frame_dig 0
+concat
+log
 retsub
 
 // read_vote_caster

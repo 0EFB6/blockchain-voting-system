@@ -2,6 +2,36 @@
   "name": "testingg",
   "methods": [
     {
+      "name": "create_box",
+      "args": [],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "test_abi",
+      "args": [
+        {
+          "type": "string",
+          "name": "dun"
+        },
+        {
+          "type": "string",
+          "name": "dun_no"
+        }
+      ],
+      "returns": {
+        "type": "void"
+      }
+    },
+    {
+      "name": "read_abi",
+      "args": [],
+      "returns": {
+        "type": "string"
+      }
+    },
+    {
       "name": "increment",
       "args": [],
       "returns": {
