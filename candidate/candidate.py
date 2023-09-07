@@ -7,6 +7,7 @@ PARTY_LEN = Int(25)
 LEN_LIMIT = Int(90)
 
 handle_creation = Seq(
+	App.globalPut(Bytes("Total Candidates"), Int(0)),
 	Approve()
 )
 
@@ -32,8 +33,9 @@ def add_par_candidate(par_n: abi.String, name: abi.String, party: abi.String):
 		Assert(Len(party.get()) <= Int(24))
 	)
 	ret = Seq(
-			App.box_replace(Concat(Bytes("P"), par_n.get(), Bytes("_CANDIDATES")), NAME_I,  name.get()),
-			App.box_replace(Concat(Bytes("P"), par_n.get(), Bytes("_CANDIDATES")), PARTY_I, party.get()),
+			App.box_replace(Concat(Bytes("P"), par_n.get(), Bytes("_CANDIDATES")), LEN_LIMIT * App.globalGet(Bytes("Total Candidates")),  name.get()),
+			App.box_replace(Concat(Bytes("P"), par_n.get(), Bytes("_CANDIDATES")), PARTY_I + (LEN_LIMIT * App.globalGet(Bytes("Total Candidates"))), party.get()),
+			App.globalPut(Bytes("Total Candidates"), App.globalGet(Bytes("Total Candidates")) + Int(1))
 		)
 	return ret
 

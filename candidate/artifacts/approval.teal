@@ -95,6 +95,9 @@ txn ApplicationID
 int 0
 ==
 assert
+byte "Total Candidates"
+int 0
+app_global_put
 int 1
 return
 
@@ -123,7 +126,10 @@ extract 2 0
 concat
 byte "_CANDIDATES"
 concat
-int 0
+int 90
+byte "Total Candidates"
+app_global_get
+*
 frame_dig -2
 extract 2 0
 box_replace
@@ -134,9 +140,20 @@ concat
 byte "_CANDIDATES"
 concat
 int 65
+int 90
+byte "Total Candidates"
+app_global_get
+*
++
 frame_dig -1
 extract 2 0
 box_replace
+byte "Total Candidates"
+byte "Total Candidates"
+app_global_get
+int 1
++
+app_global_put
 retsub
 
 // read_par_candidate_name
