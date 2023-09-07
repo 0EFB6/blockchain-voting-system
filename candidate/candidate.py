@@ -19,7 +19,7 @@ router = Router(
 
 @router.method
 def create_par_box(par_no: abi.String):
-	return Pop(App.box_create(Concat(Bytes("P"), par_no.get(), Bytes("_CANDIDATES")), LEN_LIMIT * 9))
+	return Pop(App.box_create(Concat(Bytes("P"), par_no.get(), Bytes("_CANDIDATES")), LEN_LIMIT * Int(9)))
 
 @router.method
 def add_par_candidate(par_n: abi.String, name: abi.String, party: abi.String):
